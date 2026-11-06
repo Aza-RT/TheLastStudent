@@ -42,7 +42,11 @@ if(TLS_BUILD_TESTBENCH)
   FetchContent_MakeAvailable(glfw)
   add_executable(gl_testbench native/testbench/main.cpp)
   target_link_libraries(gl_testbench PRIVATE gfxcore glfw)
-  target_compile_definitions(gl_testbench PRIVATE TLS_ASSET_DIR="${CMAKE_SOURCE_DIR}/game/assets/art")
+  target_compile_definitions(gl_testbench PRIVATE
+    TLS_ASSET_DIR="${CMAKE_SOURCE_DIR}/game/assets/art"
+    TLS_TESTBENCH_ASSET_DIR="${CMAKE_SOURCE_DIR}/native/testbench/assets"
+    TLS_SHADER_DIR="${CMAKE_SOURCE_DIR}/native/shaders"
+  )
 endif()
 if(TLS_BUILD_EXTENSION)
   set(GODOTCPP_CUSTOM_API_FILE "${CMAKE_SOURCE_DIR}/native/extension/extension_api.json" CACHE FILEPATH "Exact Godot 4.7.2 API" FORCE)
@@ -61,6 +65,6 @@ endif()
 enable_testing()
 FetchContent_Declare(doctest URL https://codeload.github.com/doctest/doctest/tar.gz/refs/tags/v2.4.11 URL_HASH SHA256=632ed2c05a7f53fa961381497bf8069093f0d6628c5f26286161fbd32a560186)
 FetchContent_MakeAvailable(doctest)
-add_executable(tls_tests native/tests/tests.cpp)
+add_executable(tls_tests native/tests/tests.cpp native/tests/azat_visibility_cases.cpp)
 target_link_libraries(tls_tests PRIVATE gfxcore doctest::doctest)
 add_test(NAME native_math_visibility_ai COMMAND tls_tests)
