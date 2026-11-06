@@ -1,0 +1,765 @@
+{
+  "tile_size": 32,
+  "size": [
+    78,
+    36
+  ],
+  "corridor": [
+    2,
+    15,
+    74,
+    4
+  ],
+  "rooms": [
+    {
+      "name": "LIBRARY",
+      "block": 1,
+      "rect": [
+        3,
+        3,
+        20,
+        11
+      ]
+    },
+    {
+      "name": "CLASSROOM 101",
+      "block": 1,
+      "rect": [
+        3,
+        21,
+        9,
+        11
+      ]
+    },
+    {
+      "name": "RESTROOM / WEST",
+      "block": 1,
+      "rect": [
+        15,
+        21,
+        8,
+        11
+      ]
+    },
+    {
+      "name": "COWORKING",
+      "block": 2,
+      "rect": [
+        28,
+        3,
+        20,
+        11
+      ]
+    },
+    {
+      "name": "ATRIUM / MAIN EXIT",
+      "block": 2,
+      "rect": [
+        28,
+        21,
+        20,
+        11
+      ]
+    },
+    {
+      "name": "CANTEEN",
+      "block": 3,
+      "rect": [
+        54,
+        3,
+        21,
+        11
+      ]
+    },
+    {
+      "name": "CLASSROOM 103",
+      "block": 3,
+      "rect": [
+        54,
+        21,
+        10,
+        11
+      ]
+    },
+    {
+      "name": "RESTROOM / EAST",
+      "block": 3,
+      "rect": [
+        67,
+        21,
+        8,
+        11
+      ]
+    }
+  ],
+  "doors": [
+    [
+      11,
+      14,
+      3,
+      1
+    ],
+    [
+      7,
+      19,
+      2,
+      2
+    ],
+    [
+      18,
+      19,
+      2,
+      2
+    ],
+    [
+      36,
+      14,
+      3,
+      1
+    ],
+    [
+      36,
+      19,
+      3,
+      2
+    ],
+    [
+      64,
+      14,
+      3,
+      1
+    ],
+    [
+      58,
+      19,
+      2,
+      2
+    ],
+    [
+      70,
+      19,
+      2,
+      2
+    ]
+  ],
+  "objects": [
+    {
+      "id": "west_key",
+      "name": "Restroom stall",
+      "pos": [
+        20,
+        29
+      ],
+      "tile": 15,
+      "action": "west_key",
+      "note": ""
+    },
+    {
+      "id": "library_drawer",
+      "name": "Librarian desk",
+      "pos": [
+        7,
+        5
+      ],
+      "tile": 8,
+      "action": "piece_1",
+      "note": ""
+    },
+    {
+      "id": "code_note",
+      "name": "Deadline whiteboard",
+      "pos": [
+        5,
+        24
+      ],
+      "tile": 7,
+      "action": "note",
+      "note": "WEEK 2. ROOM 4. GROUP 1. ZERO extensions.\n\nThe coworking locker code follows the numbers above, in order.\nWhoever resets it to 0000 buys coffee for the whole group."
+    },
+    {
+      "id": "locker",
+      "name": "Coworking locker",
+      "pos": [
+        44,
+        5
+      ],
+      "tile": 10,
+      "action": "piece_2",
+      "note": ""
+    },
+    {
+      "id": "east_key",
+      "name": "Teaching desk",
+      "pos": [
+        56,
+        24
+      ],
+      "tile": 8,
+      "action": "east_key",
+      "note": ""
+    },
+    {
+      "id": "glue",
+      "name": "Glue stick",
+      "pos": [
+        61,
+        29
+      ],
+      "tile": 21,
+      "action": "glue",
+      "note": ""
+    },
+    {
+      "id": "fridge",
+      "name": "Canteen refrigerator",
+      "pos": [
+        72,
+        5
+      ],
+      "tile": 11,
+      "action": "piece_3",
+      "note": ""
+    },
+    {
+      "id": "exit",
+      "name": "Main exit turnstiles",
+      "pos": [
+        38,
+        30
+      ],
+      "tile": 12,
+      "action": "exit",
+      "note": ""
+    },
+    {
+      "id": "library_note",
+      "name": "Library rules",
+      "pos": [
+        19,
+        4
+      ],
+      "tile": 7,
+      "action": "note",
+      "note": "LIBRARY RULES\n1. Silence after 22:00.\n2. Return your books.\n3. If a book returns itself, leave it alone.\n\nDrawer key lost in the west restroom. Again.\nWi-Fi password: still not your student ID."
+    },
+    {
+      "id": "menu_note",
+      "name": "Canteen menu",
+      "pos": [
+        56,
+        5
+      ],
+      "tile": 7,
+      "action": "note",
+      "note": "NIGHT MENU\nCoffee: unavailable.\nSoup: yesterday.\nDeadline extensions: sold out.\n\nPlease lock the refrigerator. The key belongs in Classroom 103."
+    },
+    {
+      "id": "glue_note",
+      "name": "Lab safety notice",
+      "pos": [
+        62,
+        23
+      ],
+      "tile": 7,
+      "action": "note",
+      "note": "DO NOT LEAVE GLUE OPEN.\n\nOne stick can fix three torn pieces of an ID. It cannot fix your GPA.\nOpen inventory with TAB, select all four materials, then COMBINE."
+    },
+    {
+      "id": "hide_west",
+      "name": "Hide under desk",
+      "pos": [
+        18,
+        10
+      ],
+      "tile": 8,
+      "action": "hide",
+      "note": ""
+    },
+    {
+      "id": "hide_hub",
+      "name": "Hide in locker",
+      "pos": [
+        29,
+        11
+      ],
+      "tile": 10,
+      "action": "hide",
+      "note": ""
+    },
+    {
+      "id": "hide_east",
+      "name": "Hide in service locker",
+      "pos": [
+        69,
+        29
+      ],
+      "tile": 10,
+      "action": "hide",
+      "note": ""
+    }
+  ],
+  "decor": [
+    [
+      5,
+      3,
+      9
+    ],
+    [
+      5,
+      8,
+      9
+    ],
+    [
+      9,
+      3,
+      9
+    ],
+    [
+      9,
+      8,
+      9
+    ],
+    [
+      13,
+      3,
+      9
+    ],
+    [
+      13,
+      8,
+      9
+    ],
+    [
+      17,
+      3,
+      9
+    ],
+    [
+      17,
+      8,
+      9
+    ],
+    [
+      21,
+      3,
+      9
+    ],
+    [
+      21,
+      8,
+      9
+    ],
+    [
+      6,
+      11,
+      8
+    ],
+    [
+      10,
+      11,
+      8
+    ],
+    [
+      14,
+      11,
+      8
+    ],
+    [
+      30,
+      5,
+      8
+    ],
+    [
+      30,
+      6,
+      13
+    ],
+    [
+      30,
+      9,
+      8
+    ],
+    [
+      30,
+      10,
+      13
+    ],
+    [
+      34,
+      5,
+      8
+    ],
+    [
+      34,
+      6,
+      13
+    ],
+    [
+      34,
+      9,
+      8
+    ],
+    [
+      34,
+      10,
+      13
+    ],
+    [
+      38,
+      5,
+      8
+    ],
+    [
+      38,
+      6,
+      13
+    ],
+    [
+      38,
+      9,
+      8
+    ],
+    [
+      38,
+      10,
+      13
+    ],
+    [
+      42,
+      5,
+      8
+    ],
+    [
+      42,
+      6,
+      13
+    ],
+    [
+      42,
+      9,
+      8
+    ],
+    [
+      42,
+      10,
+      13
+    ],
+    [
+      5,
+      26,
+      8
+    ],
+    [
+      5,
+      29,
+      8
+    ],
+    [
+      8,
+      26,
+      8
+    ],
+    [
+      8,
+      29,
+      8
+    ],
+    [
+      10,
+      26,
+      8
+    ],
+    [
+      10,
+      29,
+      8
+    ],
+    [
+      56,
+      26,
+      8
+    ],
+    [
+      56,
+      29,
+      8
+    ],
+    [
+      59,
+      26,
+      8
+    ],
+    [
+      59,
+      29,
+      8
+    ],
+    [
+      62,
+      26,
+      8
+    ],
+    [
+      62,
+      29,
+      8
+    ],
+    [
+      56,
+      11,
+      31
+    ],
+    [
+      60,
+      11,
+      31
+    ],
+    [
+      64,
+      11,
+      31
+    ],
+    [
+      68,
+      11,
+      31
+    ],
+    [
+      72,
+      11,
+      31
+    ],
+    [
+      58,
+      8,
+      30
+    ],
+    [
+      63,
+      8,
+      30
+    ],
+    [
+      68,
+      8,
+      30
+    ],
+    [
+      16,
+      22,
+      15
+    ],
+    [
+      19,
+      22,
+      15
+    ],
+    [
+      22,
+      22,
+      15
+    ],
+    [
+      68,
+      22,
+      15
+    ],
+    [
+      71,
+      22,
+      15
+    ],
+    [
+      74,
+      22,
+      15
+    ],
+    [
+      29,
+      22,
+      29
+    ],
+    [
+      46,
+      22,
+      29
+    ],
+    [
+      29,
+      30,
+      29
+    ],
+    [
+      46,
+      30,
+      29
+    ],
+    [
+      21,
+      12,
+      29
+    ],
+    [
+      73,
+      12,
+      29
+    ],
+    [
+      5,
+      15,
+      14
+    ],
+    [
+      13,
+      15,
+      14
+    ],
+    [
+      21,
+      15,
+      14
+    ],
+    [
+      29,
+      15,
+      14
+    ],
+    [
+      37,
+      15,
+      14
+    ],
+    [
+      45,
+      15,
+      14
+    ],
+    [
+      53,
+      15,
+      14
+    ],
+    [
+      61,
+      15,
+      14
+    ],
+    [
+      69,
+      15,
+      14
+    ],
+    [
+      32,
+      27,
+      13
+    ],
+    [
+      44,
+      27,
+      13
+    ]
+  ],
+  "lamps": [
+    [
+      208,
+      544
+    ],
+    [
+      528,
+      544
+    ],
+    [
+      848,
+      544
+    ],
+    [
+      1168,
+      544
+    ],
+    [
+      1488,
+      544
+    ],
+    [
+      1808,
+      544
+    ],
+    [
+      2128,
+      544
+    ],
+    [
+      400,
+      280
+    ],
+    [
+      1200,
+      280
+    ],
+    [
+      2080,
+      280
+    ],
+    [
+      1200,
+      840
+    ]
+  ],
+  "start": [
+    1200,
+    320
+  ],
+  "checkpoints": [
+    [
+      800,
+      544
+    ],
+    [
+      1280,
+      544
+    ],
+    [
+      1696,
+      544
+    ]
+  ],
+  "shade_spawn": [
+    544,
+    544
+  ],
+  "patrol": [
+    [
+      224,
+      544
+    ],
+    [
+      736,
+      544
+    ],
+    [
+      1216,
+      544
+    ],
+    [
+      1696,
+      544
+    ],
+    [
+      2304,
+      544
+    ],
+    [
+      1696,
+      544
+    ],
+    [
+      1216,
+      544
+    ],
+    [
+      736,
+      544
+    ]
+  ]
+}

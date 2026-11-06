@@ -1,0 +1,37 @@
+{
+  "west_key": {
+    "name": "Librarian drawer key",
+    "description": "Found in a restroom stall. Academically questionable. Opens the library desk.",
+    "tile": 19
+  },
+  "east_key": {
+    "name": "Canteen key",
+    "description": "The fridge key. Definitely not a snack.",
+    "tile": 20
+  },
+  "piece_1": {
+    "name": "ID card / piece 1 of 3",
+    "description": "The photo corner. I look exactly as tired as I feel.",
+    "tile": 16
+  },
+  "piece_2": {
+    "name": "ID card / piece 2 of 3",
+    "description": "My student number. Finally, proof that I exist.",
+    "tile": 17
+  },
+  "piece_3": {
+    "name": "ID card / piece 3 of 3",
+    "description": "The chip. Slightly cold, but hopefully functional.",
+    "tile": 18
+  },
+  "glue": {
+    "name": "Glue stick",
+    "description": "Select this and all three ID pieces, then press Combine.",
+    "tile": 21
+  },
+  "restored_id": {
+    "name": "Restored ID card",
+    "description": "Three pieces, one identity, zero remaining excuses. Return to the atrium exit.",
+    "tile": 22
+  }
+}
