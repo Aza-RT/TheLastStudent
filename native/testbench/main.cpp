@@ -1,4 +1,5 @@
 #include <tls/renderer.hpp>
+#include "azat_gl_state_checks.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
@@ -28,6 +29,7 @@ int main(int argc,char** argv){
             if(active!=GL_TEXTURE3||texture!=GLint(atlas.id)||viewport[0]!=2||viewport[2]!=55||scissor[1]!=7||!glIsEnabled(GL_SCISSOR_TEST)||!glIsEnabled(GL_DEPTH_TEST)||depth_mask||src!=GL_SRC_ALPHA||std::abs(clear[0]-.2f)>.001f)throw std::runtime_error("GL state restoration failed");
             glActiveTexture(GL_TEXTURE0);glDisable(GL_SCISSOR_TEST);glDisable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glBindFramebuffer(GL_FRAMEBUFFER,0);
             std::cout<<"GL STATE RESTORATION PASS"<<std::endl;
+            check_separate_framebuffer_bindings(renderer);
         }
         tls::Camera2D camera;glm::vec2 player(320,320);camera.center=player;float angle=0;bool flashlight=true,debug=true,old_f=false,old_f3=false;
         std::vector<tls::Segment> walls={{{0,0},{1024,0}},{{1024,0},{1024,768}},{{1024,768},{0,768}},{{0,768},{0,0}},{{480,0},{480,280}},{{480,430},{480,768}},{{180,180},{350,180}},{{650,470},{880,470}}};
