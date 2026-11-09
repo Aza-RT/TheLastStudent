@@ -3,7 +3,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <stdexcept>
 #include <array>
+#include <algorithm>
 #include <cstddef>
+#include <vector>
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 namespace tls {
@@ -21,11 +23,24 @@ void Shader::compile(const char* vs,const char* fs){
             stages[i]=glCreateShader(i==0?GL_VERTEX_SHADER:GL_FRAGMENT_SHADER);
             const char* source=i==0?vs:fs; glShaderSource(stages[i],1,&source,nullptr); glCompileShader(stages[i]);
             GLint ok; glGetShaderiv(stages[i],GL_COMPILE_STATUS,&ok);
-            if(!ok){ char log[4096]; glGetShaderInfoLog(stages[i],sizeof(log),nullptr,log); throw std::runtime_error(log); }
+            if(!ok){
+                GLint length=0;glGetShaderiv(stages[i],GL_INFO_LOG_LENGTH,&length);
+                std::vector<char> log(std::max(1,length));GLsizei written=0;
+                glGetShaderInfoLog(stages[i],static_cast<GLsizei>(log.size()),&written,log.data());
+                throw std::runtime_error(std::string(i==0?"Vertex shader compile failed: ":"Fragment shader compile failed: ")+
+                    (written>0?std::string(log.data(),written):"driver returned no log"));
+            }
         }
         GLuint next=glCreateProgram(); for(auto s:stages) glAttachShader(next,s); glLinkProgram(next);
         GLint ok; glGetProgramiv(next,GL_LINK_STATUS,&ok);
-        if(!ok){ char log[4096]; glGetProgramInfoLog(next,sizeof(log),nullptr,log); glDeleteProgram(next); throw std::runtime_error(log); }
+        if(!ok){
+            GLint length=0;glGetProgramiv(next,GL_INFO_LOG_LENGTH,&length);
+            std::vector<char> log(std::max(1,length));GLsizei written=0;
+            glGetProgramInfoLog(next,static_cast<GLsizei>(log.size()),&written,log.data());
+            glDeleteProgram(next);
+            throw std::runtime_error(std::string("Program link failed: ")+
+                (written>0?std::string(log.data(),written):"driver returned no log"));
+        }
         if(id_) glDeleteProgram(id_); id_=next; uniforms_.clear();
     } catch(...) { for(auto s:stages) if(s) glDeleteShader(s); throw; }
     for(auto s:stages) glDeleteShader(s);
