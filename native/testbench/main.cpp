@@ -1,9 +1,9 @@
 #include <tls/renderer.hpp>
+#include "azat_capture.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
 #include <cstring>
-#include <fstream>
 int main(int argc,char** argv){
     bool smoke=argc>1 && std::strcmp(argv[1],"--smoke")==0;
     if(!glfwInit()) return 1;
@@ -29,6 +29,12 @@ int main(int argc,char** argv){
             glActiveTexture(GL_TEXTURE0);glDisable(GL_SCISSOR_TEST);glDisable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glBindFramebuffer(GL_FRAMEBUFFER,0);
             std::cout<<"GL STATE RESTORATION PASS"<<std::endl;
         }
+        bool capture_requested=false;
+        glfwSetWindowUserPointer(window,&capture_requested);
+        glfwSetKeyCallback(window,[](GLFWwindow* target,int key,int,int action,int){
+            if(key==GLFW_KEY_P && action==GLFW_PRESS)
+                *static_cast<bool*>(glfwGetWindowUserPointer(target))=true;
+        });
         tls::Camera2D camera;glm::vec2 player(320,320);camera.center=player;float angle=0;bool flashlight=true,debug=true,old_f=false,old_f3=false;
         std::vector<tls::Segment> walls={{{0,0},{1024,0}},{{1024,0},{1024,768}},{{1024,768},{0,768}},{{0,768},{0,0}},{{480,0},{480,280}},{{480,430},{480,768}},{{180,180},{350,180}},{{650,470},{880,470}}};
         double before=glfwGetTime();int frames=0;double start=before;
@@ -62,7 +68,11 @@ int main(int argc,char** argv){
                 matrix("PLAYER MODEL = Translate * Scale",tls::Camera2D::model(player,{32,32}));matrix("VIEW",camera.view());matrix("PROJECTION",camera.projection(float(w),float(h)));
                 batch.flush(font,glm::ortho(0.f,float(w),float(h),0.f,-1.f,1.f));
             }
-            if(smoke && frames==20){std::vector<unsigned char> pixels(w*h*3);glPixelStorei(GL_PACK_ALIGNMENT,1);glReadPixels(0,0,w,h,GL_RGB,GL_UNSIGNED_BYTE,pixels.data());std::ofstream image("testbench.ppm",std::ios::binary);image<<"P6\n"<<w<<" "<<h<<"\n255\n";for(int row=h-1;row>=0;--row) image.write((char*)pixels.data()+row*w*3,w*3);}
+            if(smoke && frames==20) std::cout<<"Screenshot: "<<capture_ppm("testbench.ppm",w,h)<<std::endl;
+            if(capture_requested){
+                capture_requested=false;
+                std::cout<<"Screenshot: "<<capture_ppm("testbench-manual.ppm",w,h)<<std::endl;
+            }
             if(smoke && ++frames>=90){glFinish();std::cout<<"SMOKE PASS: "<<frames<<" frames, "<<renderer.draw_calls+2<<" draws; seconds="<<glfwGetTime()-start<<std::endl;break;}
             glfwSwapBuffers(window);
         }
