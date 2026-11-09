@@ -1,4 +1,5 @@
 #include <tls/renderer.hpp>
+#include "azat_gl_state_checks.hpp"
 #include "azat_capture.hpp"
 #include "azat_frame_time.hpp"
 #include <GLFW/glfw3.h>
@@ -29,6 +30,7 @@ int main(int argc,char** argv){
             if(active!=GL_TEXTURE3||texture!=GLint(atlas.id)||viewport[0]!=2||viewport[2]!=55||scissor[1]!=7||!glIsEnabled(GL_SCISSOR_TEST)||!glIsEnabled(GL_DEPTH_TEST)||depth_mask||src!=GL_SRC_ALPHA||std::abs(clear[0]-.2f)>.001f)throw std::runtime_error("GL state restoration failed");
             glActiveTexture(GL_TEXTURE0);glDisable(GL_SCISSOR_TEST);glDisable(GL_DEPTH_TEST);glDepthMask(GL_TRUE);glBindFramebuffer(GL_FRAMEBUFFER,0);
             std::cout<<"GL STATE RESTORATION PASS"<<std::endl;
+            check_separate_framebuffer_bindings(renderer);
         }
         bool capture_requested=false;
         glfwSetWindowUserPointer(window,&capture_requested);
