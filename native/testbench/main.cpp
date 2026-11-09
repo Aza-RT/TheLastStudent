@@ -1,10 +1,11 @@
 #include <tls/renderer.hpp>
 #include "azat_gl_state_checks.hpp"
+#include "azat_capture.hpp"
+#include "azat_frame_time.hpp"
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
 #include <cstring>
-#include <fstream>
 int main(int argc,char** argv){
     bool smoke=argc>1 && std::strcmp(argv[1],"--smoke")==0;
     if(!glfwInit()) return 1;
@@ -31,11 +32,17 @@ int main(int argc,char** argv){
             std::cout<<"GL STATE RESTORATION PASS"<<std::endl;
             check_separate_framebuffer_bindings(renderer);
         }
+        bool capture_requested=false;
+        glfwSetWindowUserPointer(window,&capture_requested);
+        glfwSetKeyCallback(window,[](GLFWwindow* target,int key,int,int action,int){
+            if(key==GLFW_KEY_P && action==GLFW_PRESS)
+                *static_cast<bool*>(glfwGetWindowUserPointer(target))=true;
+        });
         tls::Camera2D camera;glm::vec2 player(320,320);camera.center=player;float angle=0;bool flashlight=true,debug=true,old_f=false,old_f3=false;
         std::vector<tls::Segment> walls={{{0,0},{1024,0}},{{1024,0},{1024,768}},{{1024,768},{0,768}},{{0,768},{0,0}},{{480,0},{480,280}},{{480,430},{480,768}},{{180,180},{350,180}},{{650,470},{880,470}}};
-        double before=glfwGetTime();int frames=0;double start=before;
+        double before=glfwGetTime();int frames=0;double start=before;RollingFrameTime frame_time;
         while(!glfwWindowShouldClose(window)){
-            double now=glfwGetTime();float dt=std::min(float(now-before),.05f);before=now;
+            double now=glfwGetTime();double interval=now-before;frame_time.add(interval);float dt=std::min(float(interval),.05f);before=now;
             glfwPollEvents();if(glfwGetKey(window,GLFW_KEY_ESCAPE)) break;
             bool f=glfwGetKey(window,GLFW_KEY_F)==GLFW_PRESS;if(f&&!old_f) flashlight=!flashlight;old_f=f;
             bool f3=glfwGetKey(window,GLFW_KEY_F3)==GLFW_PRESS;if(f3&&!old_f3) debug=!debug;old_f3=f3;
@@ -54,7 +61,7 @@ int main(int argc,char** argv){
             std::vector<tls::Light> lights={{{230,130},240,0,-1,.7f,{.4f,.7f,.78f}},{{790,590},260,0,-1,.9f,{.9f,.62f,.35f}}};
             if(flashlight) lights.push_back({player,450,angle,.75f,2.5f,{.82f,.90f,1.f}});
             renderer.composite(0,camera,walls,lights,float(now),.3f);
-            if(debug){ char title[512];auto model=tls::Camera2D::model(player,{32,32},angle);auto v=camera.view();auto p=camera.projection(float(w),float(h));snprintf(title,sizeof(title),"OpenGL 3.3 | FPS %.0f | draws %d | XY %.0f %.0f | M %.2f %.2f | V %.2f %.2f | P %.4f %.4f | WASD mouse F F3 Esc",1.f/std::max(dt,.0001f),renderer.draw_calls+1,player.x,player.y,model[0][0],model[1][0],v[3][0],v[3][1],p[0][0],p[1][1]);glfwSetWindowTitle(window,title);}
+            if(debug){ char title[512];auto model=tls::Camera2D::model(player,{32,32},angle);auto v=camera.view();auto p=camera.projection(float(w),float(h));snprintf(title,sizeof(title),"OpenGL 3.3 | FPS %.0f | %.2f ms | draws %d | XY %.0f %.0f | M %.2f %.2f | V %.2f %.2f | P %.4f %.4f | WASD mouse F F3 Esc",1.f/std::max(dt,.0001f),frame_time.milliseconds(),renderer.draw_calls+1,player.x,player.y,model[0][0],model[1][0],v[3][0],v[3][1],p[0][0],p[1][1]);glfwSetWindowTitle(window,title);}
             if(debug){
                 batch.begin();float row=14;
                 auto text=[&](const std::string& line){float col=16;for(unsigned char ch:line){int c=std::max(0,int(ch)-32);float u=(c%16)/16.f,v=(c/16)*10.f/64;batch.quad(tls::Camera2D::model({col,row},{12,15}),{u,v,u+1.f/16,v+10.f/64});col+=12;}row+=17;};
@@ -64,7 +71,11 @@ int main(int argc,char** argv){
                 matrix("PLAYER MODEL = Translate * Scale",tls::Camera2D::model(player,{32,32}));matrix("VIEW",camera.view());matrix("PROJECTION",camera.projection(float(w),float(h)));
                 batch.flush(font,glm::ortho(0.f,float(w),float(h),0.f,-1.f,1.f));
             }
-            if(smoke && frames==20){std::vector<unsigned char> pixels(w*h*3);glPixelStorei(GL_PACK_ALIGNMENT,1);glReadPixels(0,0,w,h,GL_RGB,GL_UNSIGNED_BYTE,pixels.data());std::ofstream image("testbench.ppm",std::ios::binary);image<<"P6\n"<<w<<" "<<h<<"\n255\n";for(int row=h-1;row>=0;--row) image.write((char*)pixels.data()+row*w*3,w*3);}
+            if(smoke && frames==20) std::cout<<"Screenshot: "<<capture_ppm("testbench.ppm",w,h)<<std::endl;
+            if(capture_requested){
+                capture_requested=false;
+                std::cout<<"Screenshot: "<<capture_ppm("testbench-manual.ppm",w,h)<<std::endl;
+            }
             if(smoke && ++frames>=90){glFinish();std::cout<<"SMOKE PASS: "<<frames<<" frames, "<<renderer.draw_calls+2<<" draws; seconds="<<glfwGetTime()-start<<std::endl;break;}
             glfwSwapBuffers(window);
         }
