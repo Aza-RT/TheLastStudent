@@ -2,8 +2,10 @@
 in vec2 uv;
 out vec4 frag;
 
+const float LINE_PERIOD = 3.0;   
+const float LINE_ALPHA  = 0.20;  
 void main() {
-    // TODO(ALIMA-05): Derive a repeating horizontal line pattern and its alpha.
-    // This transparent placeholder is not wired into the demo.
-    frag = vec4(0.0);
+    float row = mod(floor(gl_FragCoord.y), LINE_PERIOD);
+    float alpha = (row < 1.0) ? LINE_ALPHA : 0.0;
+    frag = vec4(0.0, 0.0, 0.0, alpha);
 }

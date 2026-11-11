@@ -2,6 +2,7 @@
 #include "azat_gl_state_checks.hpp"
 #include "azat_capture.hpp"
 #include "azat_frame_time.hpp"
+#include "alima_crt.hpp" 
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <cmath>
@@ -39,6 +40,8 @@ int main(int argc, char** argv) {
 
         tls::Texture2D lamp;
         lamp.load(std::string(TLS_TESTBENCH_ASSET_DIR) + "/alima/lamp_strip.png");
+
+        CrtOverlay crt_overlay{ std::string(TLS_SHADER_DIR) };
 
         if (smoke) {
             glEnable(GL_SCISSOR_TEST); glScissor(3, 7, 11, 13);
@@ -96,6 +99,9 @@ int main(int argc, char** argv) {
         bool palette = false;
         bool old_g = false;
 
+        bool crt = false;   
+        bool old_c = false; 
+
         std::vector<tls::Segment> walls = {
             { { 0,0 },{ 1024,0 } },{ { 1024,0 },{ 1024,768 } },
             { { 1024,768 },{ 0,768 } },{ { 0,768 },{ 0,0 } },
@@ -133,6 +139,10 @@ int main(int argc, char** argv) {
             bool g = glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS;
             if (g && !old_g) palette = !palette;
             old_g = g;
+
+            bool c_key = glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS;
+            if (c_key && !old_c) crt = !crt;
+            old_c = c_key;
 
             glm::vec2 move(
                 float(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) - float(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS),
@@ -222,12 +232,14 @@ int main(int argc, char** argv) {
             renderer.palette_limit = palette;
             renderer.composite(0, camera, walls, lights, float(now), .3f);
 
+            if (crt) crt_overlay.draw();
+
             if (debug) {
                 char title[512];
                 auto model = tls::Camera2D::model(player, { 32, 32 }, angle);
                 auto v = camera.view();
                 auto p = camera.projection(float(w), float(h));
-                snprintf(title, sizeof(title), "OpenGL 3.3 | FPS %.0f | %.2f ms | draws %d | XY %.0f %.0f | M %.2f %.2f | V %.2f %.2f | P %.4f %.4f | WASD mouse F T G F3 Esc", 1.f / std::max(dt, .0001f), frame_time.milliseconds(), renderer.draw_calls + 1, player.x, player.y, model[0][0], model[1][0], v[3][0], v[3][1], p[0][0], p[1][1]);
+                snprintf(title, sizeof(title), "OpenGL 3.3 | FPS %.0f | %.2f ms | draws %d | XY %.0f %.0f | M %.2f %.2f | V %.2f %.2f | P %.4f %.4f | WASD mouse F T G C F3 Esc", 1.f / std::max(dt, .0001f), frame_time.milliseconds(), renderer.draw_calls + 1, player.x, player.y, model[0][0], model[1][0], v[3][0], v[3][1], p[0][0], p[1][1]);
                 glfwSetWindowTitle(window, title);
             }
 
