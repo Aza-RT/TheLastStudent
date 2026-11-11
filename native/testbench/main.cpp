@@ -19,8 +19,8 @@ int main(int argc, char** argv) {
         tls::Renderer renderer;tls::SpriteBatch batch;tls::Texture2D atlas;atlas.load(std::string(TLS_ASSET_DIR) + "/atlas.png");
         tls::Texture2D font;font.load(std::string(TLS_ASSET_DIR) + "/debug_font.png");
         tls::Texture2D props;props.load(std::string(TLS_TESTBENCH_ASSET_DIR) + "/alima/props.png");
+        tls::Texture2D lamp;lamp.load(std::string(TLS_TESTBENCH_ASSET_DIR) + "/alima/lamp_strip.png");
         if (smoke) {
-            
             glEnable(GL_SCISSOR_TEST);glScissor(3, 7, 11, 13);glEnable(GL_DEPTH_TEST);glDepthMask(GL_FALSE);
             glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE, GL_ZERO, GL_ONE_MINUS_SRC_ALPHA);glViewport(2, 4, 55, 60);glActiveTexture(GL_TEXTURE3);glBindTexture(GL_TEXTURE_2D, atlas.id);glClearColor(.2f, .3f, .4f, .5f);
             {
@@ -40,13 +40,6 @@ int main(int argc, char** argv) {
                 *static_cast<bool*>(glfwGetWindowUserPointer(target)) = true;
             });
         tls::Camera2D camera;glm::vec2 player(320, 320);camera.center = player;float angle = 0;bool flashlight = true, debug = true, old_f = false, old_f3 = false;
-        
-        bool old_t = false;int torch_preset = 0;
-        const glm::vec3 torch_presets[3] = {
-            { .82f,.90f,1.f },   
-            { 1.f,.68f,.28f },   
-            { .35f,.85f,1.f }    
-        };
         std::vector<tls::Segment> walls = { { { 0,0 },{ 1024,0 } },{ { 1024,0 },{ 1024,768 } },{ { 1024,768 },{ 0,768 } },{ { 0,768 },{ 0,0 } },{ { 480,0 },{ 480,280 } },{ { 480,430 },{ 480,768 } },{ { 180,180 },{ 350,180 } },{ { 650,470 },{ 880,470 } } };
         double before = glfwGetTime();int frames = 0;double start = before;RollingFrameTime frame_time;
         while (!glfwWindowShouldClose(window)) {
@@ -54,8 +47,6 @@ int main(int argc, char** argv) {
             glfwPollEvents();if (glfwGetKey(window, GLFW_KEY_ESCAPE)) break;
             bool f = glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS;if (f && !old_f) flashlight = !flashlight;old_f = f;
             bool f3 = glfwGetKey(window, GLFW_KEY_F3) == GLFW_PRESS;if (f3 && !old_f3) debug = !debug;old_f3 = f3;
-           
-            bool t = glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS;if (t && !old_t) torch_preset = (torch_preset + 1) % 3;old_t = t;
             glm::vec2 move(float(glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) - float(glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS), float(glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) - float(glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS));
             if (glm::length(move) > 0) { auto next = player + glm::normalize(move) * dt * 160.f;if (tls::Visibility::line_of_sight(player, next, walls)) player = next; }
             int w, h;glfwGetFramebufferSize(window, &w, &h);if (w < 1 || h < 1) continue;
@@ -72,9 +63,18 @@ int main(int argc, char** argv) {
             batch.flush(props, world_vp);batch.begin();
             int direction = int(std::floor((angle + 3.14159f) / 1.5708f)) % 4;int walk = glm::length(move) > 0 ? int(now * 9) % 4 : 0;
             tile(player, { 32,32 }, 32 + direction * 4 + walk);batch.flush(atlas, world_vp);
+            batch.begin();
+            {
+                const glm::vec2 lamp_position(230.f, 130.f);            
+                const int lamp_frame = int(now * 6.0) % 4;                    
+                const float inset = .5f;                                  
+                const float strip_w = float(lamp.width), strip_h = float(lamp.height);
+                float u0 = (lamp_frame * 32.f + inset) / strip_w, u1 = (lamp_frame * 32.f + 32.f - inset) / strip_w, v0 = inset / strip_h, v1 = (32.f - inset) / strip_h;
+                batch.quad(tls::Camera2D::model(lamp_position, { 32,32 }), { u0,v0,u1,v1 });
+            }
+            batch.flush(lamp, world_vp);
             std::vector<tls::Light> lights = { { { 230,130 },240,0,-1,.7f,{ .4f,.7f,.78f } },{ { 790,590 },260,0,-1,.9f,{ .9f,.62f,.35f } } };
-            
-            if (flashlight) lights.push_back({ player,450,angle,.75f,2.5f,torch_presets[torch_preset] });
+            if (flashlight) lights.push_back({ player,450,angle,.75f,2.5f,{ .82f,.90f,1.f } });
             renderer.composite(0, camera, walls, lights, float(now), .3f);
             if (debug) { char title[512];auto model = tls::Camera2D::model(player, { 32,32 }, angle);auto v = camera.view();auto p = camera.projection(float(w), float(h));snprintf(title, sizeof(title), "OpenGL 3.3 | FPS %.0f | %.2f ms | draws %d | XY %.0f %.0f | M %.2f %.2f | V %.2f %.2f | P %.4f %.4f | WASD mouse F F3 Esc", 1.f / std::max(dt, .0001f), frame_time.milliseconds(), renderer.draw_calls + 1, player.x, player.y, model[0][0], model[1][0], v[3][0], v[3][1], p[0][0], p[1][1]);glfwSetWindowTitle(window, title); }
             if (debug) {
