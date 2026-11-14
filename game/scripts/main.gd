@@ -267,10 +267,21 @@ func close_modal() -> void:
         modal.queue_free()
     modal = null
 
+func modal_body(card: Panel, text: String, font_size: int) -> RichTextLabel:
+    var body := RichTextLabel.new()
+    body.position = Vector2(30, 115)
+    body.size = Vector2(770, 290)
+    body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    body.scroll_active = true
+    body.add_theme_font_size_override("normal_font_size", font_size)
+    body.add_theme_color_override("default_color", TEXT)
+    body.text = text
+    card.add_child(body)
+    return body
+
 func show_note(title: String, text: String, close_text: String = "CLOSE / E") -> void:
     var card := new_modal("note", title)
-    var body := label(card, text, Rect2(30, 120, 770, 275), 20)
-    body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    modal_body(card, text, 20)
     button(card, close_text, Rect2(30, 420, 260, 56), close_modal, true).grab_focus()
 
 func show_controls() -> void:
@@ -415,8 +426,7 @@ func on_escaped() -> void:
     var card := new_modal("ending", "06:03 AM / YOU MADE IT OUT")
     var dim: ColorRect = modal.get_child(0)
     dim.color = Color(0.15,0.19,0.18,0.76)
-    var body := label(card, str(DialogueManager.lines.escape) + "\n\nThe deadline is still there. But so is tomorrow.\n\nTIME  %s       CAUGHT  %d\n\nThanks for playing." % [format_time(GameState.elapsed), GameState.catches], Rect2(30, 118, 770, 276), 23)
-    body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+    modal_body(card, str(DialogueManager.lines.escape) + "\n\nThe deadline is still there. But so is tomorrow.\n\nTIME  %s       CAUGHT  %d\n\nThanks for playing." % [format_time(GameState.elapsed), GameState.catches], 23)
     button(card, "PLAY AGAIN", Rect2(30, 420, 360, 56), start_game, true).grab_focus()
     button(card, "MAIN MENU", Rect2(414, 420, 360, 56), show_main_menu)
 
