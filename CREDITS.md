@@ -1,5 +1,7 @@
 # Credits and asset register
 
+**Group IT - 2504:** Alima Beisembayeva, Azat Dauletbek, and Shakhriyar Yerzhanov.
+
 Original game code, shaders, procedural art, audio, map design and writing: **The Last Student contributors**, 2026. Created for a three-person Computer Graphics Fundamentals project at Astana IT University. No real teachers are named and no university logo was used.
 
 Original project sources and generated creative assets are covered by the root **MIT License**. External dependencies retain their own licenses. AITU is the setting, not a claim of official endorsement.

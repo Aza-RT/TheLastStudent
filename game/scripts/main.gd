@@ -288,7 +288,7 @@ func show_controls() -> void:
     show_note("CONTROLS", "WASD / ARROWS     Move\nMOUSE                       Aim the flashlight\nF                                  Toggle flashlight (light attracts the Shade)\nSHIFT                         Sprint: faster, but the Shade hears you\nE                                  Search, read, hide / leave a hiding spot\nTAB / I                       Inventory: select materials, then Combine\nESC                             Pause / close a panel\nF3                                Native matrices and renderer stats\nF4                                Switch raw GL / C++ texture fallback")
 
 func show_credits() -> void:
-    show_note("BUILT FOR THE NIGHT SHIFT", "THE LAST STUDENT: AITU Night Shift - Escape\nComputer Graphics Fundamentals / Astana IT University\n\nOriginal procedural pixel art, PCM audio, writing and game code.\nC++17 renderer: custom GLSL, GLM, GLFW, GLEW, stb_image.\nGodot 4.7.2 + godot-cpp / native visibility and Shade AI.\n\nThird-party notices and original-asset license: CREDITS.md")
+    show_note("BUILT FOR THE NIGHT SHIFT", "THE LAST STUDENT: AITU Night Shift - Escape\nComputer Graphics Fundamentals / Astana IT University\nIT - 2504\nAlima Beisembayeva / Azat Dauletbek / Shakhriyar Yerzhanov\n\nOriginal procedural pixel art, PCM audio, writing and game code.\nC++17 renderer: custom GLSL, GLM, GLFW, GLEW, stb_image.\nGodot 4.7.2 + godot-cpp / native visibility and Shade AI.\n\nThird-party notices and original-asset license: CREDITS.md")
 
 func show_pause() -> void:
     var card := new_modal("pause", "THE NIGHT CAN WAIT")
